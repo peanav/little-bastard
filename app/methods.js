@@ -8,7 +8,7 @@ methods.get = function(req, res) {
 
   if(parts.length === 1) {
     // Get All Documents
-    mongo.get(parts[0], function(items) {
+    mongo.getCollection(parts[0], function(items) {
       res.json(items);
     });
   } else if(parts.length === 2) {
