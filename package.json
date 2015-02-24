@@ -1,0 +1,18 @@
+{
+  "name": "peanav-server",
+  "version": "0.0.0",
+  "description": "A starter backend for my projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_ENV=development nodemon index.js"
+  },
+  "author": "PeaNav",
+  "license": "MIT",
+  "dependencies": {
+    "express": "~4.11.2",
+    "mongodb": "~1.4.31",
+    "nconf": "~0.7.1",
+    "googleapis": "~1.1.3"
+  }
+}
