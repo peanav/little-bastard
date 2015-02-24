@@ -13,6 +13,9 @@ methods.get = function(req, res) {
     });
   } else if(parts.length === 2) {
     // Get Document By Id
+    mongo.getById(parts[0], parts[1], function(item) {
+      res.json(item);
+    });
   } else {
     // Get Documents By Search
   }
