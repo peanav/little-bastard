@@ -1,9 +1,12 @@
 var utils = require('./utils');
 var mongo = require('./mongo');
 
-var methods = {};
+var api = {
+  get: get,
+  post: post
+}
 
-methods.get = function(req, res) {
+function get(req, res) {
   var parts = req.path.split('/').filter(utils.isTruthy);
 
   if(parts.length === 1) {
@@ -19,7 +22,21 @@ methods.get = function(req, res) {
   } else {
     // Get Documents By Search
   }
-
 }
 
-module.exports = methods;
+function post(req, res) {
+  var parts = req.path.split('/').filter(utils.isTruthy);
+  mongo.insertDocument(parts[0], req.body, function(err, result) {
+    if(err) {
+      res.send();
+    } else {
+      if(result.length === 1) {
+        res.json(result[0]);
+      } else {
+        res.json(result);
+      }
+    }
+  });
+}
+
+module.exports = api;

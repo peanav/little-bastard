@@ -5,9 +5,10 @@ var nconf = require('nconf');
 nconf.argv().env().file('./config/' + nconf.get('NODE_ENV')  + '.json');
 
 var url = nconf.get('DBURL');
-var mongo = {
+var api = {
   getCollection: getCollection,
-  getById: getById
+  getById: getById,
+  insertDocument: insertDocument
 };
 
 
@@ -35,16 +36,31 @@ var find = function(collectionName, where, callback) {
   });
 }
 
-var findOne = function(collectionName, id, callback) {
+function findOne(collectionName, id, callback) {
+  // Mongo Ids must be 24 string chars
+  if(id.length !== 24) { 
+    callback({});
+    return;
+  }
+
+  // Create an ObjectID from the string id
   var objId = new ObjectID(id);
+
+  // Connect to the DB and preform the findOne operation
   connect(function(db) {
     var collection = db.collection(collectionName);
     collection.findOne({_id: objId}, {}, function(err, doc) {
-      callback(doc);
+      callback(doc || {});
     });
   });
 }
 
+function insertDocument(collectionName, document, cb) {
+  connect(function(db) {
+    var collection = db.collection(collectionName);
+    collection.insert(document, cb);
+  });
+}
 
 
-module.exports = mongo;
+module.exports = api;
