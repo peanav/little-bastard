@@ -9,6 +9,7 @@ var api = {
   getCollection: getCollection,
   getById: getById,
   insertDocument: insertDocument,
+  updateDocument: updateDocument,
   removeDocument: removeDocument,
 };
 
@@ -57,6 +58,14 @@ function insertDocument(collectionName, document, callback) {
   connect(callback, function(db) {
     var collection = db.collection(collectionName);
     collection.insert(document, callback);
+  });
+}
+
+function updateDocument(collectionName, id, document, callback) {
+  var objectId = getObjectId(id, callback);
+  objectId && connect(callback, function(db) {
+    var collection = db.collection(collectionName);
+    collection.update({ _id : objectId }, document, callback);
   });
 }
 
