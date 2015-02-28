@@ -10,12 +10,12 @@ var app = express();
 app.use(express.static(process.cwd() + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer());
 
 app.get('*', methods.get);
 app.post('*', methods.post);
+app.delete('*', methods.remove);
 
 var port = conf.get('PORT') || 3000;
 var server = app.listen(port, function() {
-    console.log('Your PeaNav Server is up and running on port ' + port + ', you little bastard');
+  console.log("Lil' Bastard is running on port " + port);
 });

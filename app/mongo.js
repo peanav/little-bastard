@@ -8,59 +8,64 @@ var url = nconf.get('DBURL');
 var api = {
   getCollection: getCollection,
   getById: getById,
-  insertDocument: insertDocument
+  insertDocument: insertDocument,
+  removeDocument: removeDocument,
 };
 
+function getObjectId(id, callback) {
+  try {
+    return new ObjectID(id);
+  } catch(err) {
+    callback(new Error('Error Parsing Mongo ObjectID: ' + err.message));
+  }
+}
 
-function connect(cb) {
+function connect(errorCallback, callback) {
   MongoClient.connect(url, function(err, db) {
-    if(err) { console.log('error connecting to db'); }
-    cb(db);
+    if(err) {
+      errorCallback(err, null);
+      return;
+    }
+    callback(db);
   });
 }
 
-function getCollection(collectionName, cb) {
-  find(collectionName, {}, cb);
+function getCollection(collectionName, callback) {
+  find(collectionName, {}, callback);
 }
 
-function getById(collectionName, id, cb) {
-  findOne(collectionName, id, cb);
+function getById(collectionName, id, callback) {
+  findOne(collectionName, id, callback);
 }
 
 var find = function(collectionName, where, callback) {
-  connect(function(db) {
+  connect(callback, function(db) {
     var collection = db.collection(collectionName);
-    collection.find(where).toArray(function(err, docs) {
-      callback(docs);
-    });
+    collection.find(where).toArray(callback);
   });
 }
 
 function findOne(collectionName, id, callback) {
-  // Mongo Ids must be 24 string chars
-  if(id.length !== 24) { 
-    callback({});
-    return;
-  }
-
-  // Create an ObjectID from the string id
-  var objId = new ObjectID(id);
-
-  // Connect to the DB and preform the findOne operation
-  connect(function(db) {
+  var objectId = getObjectId(id, callback);
+  objectId && connect(callback, function(db) {
     var collection = db.collection(collectionName);
-    collection.findOne({_id: objId}, {}, function(err, doc) {
-      callback(doc || {});
-    });
+    collection.findOne({_id: objectId}, {}, callback);
   });
 }
 
-function insertDocument(collectionName, document, cb) {
-  connect(function(db) {
+function insertDocument(collectionName, document, callback) {
+  connect(callback, function(db) {
     var collection = db.collection(collectionName);
-    collection.insert(document, cb);
+    collection.insert(document, callback);
   });
 }
 
+function removeDocument(collectionName, id, callback) {
+  var objectId = getObjectId(id, callback);
+  objectId && connect(callback, function(db) {
+    var collection = db.collection(collectionName);
+    collection.remove({ _id : objectId }, callback);
+  });
+}
 
 module.exports = api;
