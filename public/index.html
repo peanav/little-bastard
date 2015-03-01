@@ -1,1 +1,68 @@
-Here is a test of the test stuff
+<!DOCTYPE html>
+<html>
+  <head>/
+    <meta charset="UTF-8">
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      .app {
+        display: flex;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        align-items: center;
+        justify-content: center;
+
+        background: -webkit-linear-gradient(90deg, #348F50 10%, #56B4D3 90%);
+        background:    -moz-linear-gradient(90deg, #348F50 10%, #56B4D3 90%);
+        background:     -ms-linear-gradient(90deg, #348F50 10%, #56B4D3 90%);
+        background:         linear-gradient(90deg, #348F50 10%, #56B4D3 90%);
+      }
+
+      .button {
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.7);
+        border: solid 3px rgba(255, 255, 255, 0.7);
+        padding: 30px;
+        font-size: 30px;
+        line-height: 30px;
+        text-transform: uppercase;
+        display: block;
+      }
+
+      .button:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <a class="button" id="login-button">Login with Google</a>
+    </div>
+    <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+    <script>
+      var button = document.getElementById('login-button');
+      button.addEventListener('click', function() {
+        gapi.auth.signIn({
+          clientid: '971803875004-ogavvsj6r3ei6j9jpiblaouhkn0g5lfj.apps.googleusercontent.com',
+          scope: 'https://www.googleapis.com/auth/plus.login',
+          cookiepolicy: 'single_host_origin',
+          callback: 'loginCallback'
+        });
+      });
+
+      function loginCallback(result) {
+        console.log(result);
+      }
+
+    </script>
+
+
+  </body>
+</html>
