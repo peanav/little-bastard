@@ -25,36 +25,40 @@
         background:         linear-gradient(90deg, #348F50 10%, #56B4D3 90%);
       }
 
-      .button {
-        cursor: pointer;
-        color: rgba(255, 255, 255, 0.7);
-        border: solid 3px rgba(255, 255, 255, 0.7);
-        padding: 30px;
-        font-size: 30px;
-        line-height: 30px;
-        text-transform: uppercase;
-        display: block;
+      .displayName {
+        color: rgba(255,255,255,.6);
+        margin-right: 15px;
       }
 
-      .button:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
     </style>
   </head>
   <body>
     <div class="app">
-      <a class="button" id="login-button">Login with Google</a>
+      <span class="displayName"></span>
     </div>
     <script>
-      var button = document.getElementById('login-button');
-      get('/loginurl', function(url) { button.setAttribute('href', url); });
+      get('/environment', function(response) {
+        var app = document.querySelector('.app');
+        var displayName = document.querySelector('.displayName');
+        var avatar = document.createElement('img');
+        displayName.innerText = response.displayName;
+        avatar.setAttribute('src', response.avatar);
+        app.appendChild(avatar);
+      });
 
       function get(url, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url);
-        xhr.onload = function() { callback(this.response); };
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+          if(xhr.status === 401) {
+            window.location = '/';
+          }
+          callback(this.response);
+        };
         xhr.send();
       };
     </script>
   </body>
 </html>
+
