@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "A starter backend for my projects",
   "main": "index.js",
+  "bin": {
+    "bastard": "./bin/bastard"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=development nodemon index.js"
@@ -18,6 +21,9 @@
     "multer": "~0.1.8",
     "request": "~2.53.0",
     "express-session": "~1.10.3",
-    "node-uuid": "~1.4.3"
+    "node-uuid": "~1.4.3",
+    "pg": "~4.3.0",
+    "commander": "~2.7.1",
+    "inquirer": "~0.8.0"
   }
 }

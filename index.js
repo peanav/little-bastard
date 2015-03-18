@@ -6,6 +6,7 @@ var uuid = require('node-uuid');
 var conf = require('nconf');
 var methods = require('./app/methods');
 var login = require('./app/login');
+var pg = require('./app/pg');
 
 conf.argv().env().file('./config/' + conf.get('NODE_ENV')  + '.json');
 

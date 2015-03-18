@@ -1,0 +1,24 @@
+#!/bin/sh
+
+devConfig="
+{\n
+  \"PORT\": 9000,\n
+  \"DB_URL\": \"\",\n
+  \"SESSION_SECRET\": \"\",\n
+  \"GOOGLE_CLIENT_ID\": \"\",\n
+  \"GOOGLE_CLIENT_SECRET\": \"\",\n
+  \"GOOGLE_REDIRECT_URL\": \"\"\n
+}
+"
+if test -e "config"
+then
+  if test -e "../config/development.json"
+  then
+    echo "Development configuration file already exists"
+  else 
+    echo $devConfig > ../config/development.json
+  fi
+else
+  mkdir ../config
+  echo $devConfig > ../config/development.json
+fi

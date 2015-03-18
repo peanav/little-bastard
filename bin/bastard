@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var inquirer = require('inquirer');
+var path = require('path');
+var pg = require('../app/pg');
+
+var cliVersion = require(path.resolve(__dirname + '/../package.json')).version;
+
+program
+  .version(cliVersion);
+
+program
+  .command('finalize [tableName]')
+  .description('finalize a table by converting the json data to real columns')
+  .action(function(tableName) {
+    pg.run('select * from ' + tableName + ' limit 1', function(err, result) {
+      console.log('Enter column types of each member of the object');
+      var rowsToAdd = Object.keys(result.rows[0]._data);
+      var questions = rowsToAdd.map(function(columnName) {
+        return {
+          name: columnName,
+          message: columnName,
+        }
+      });
+      inquirer.prompt(questions, function(answers) {
+        console.log(answers);
+      });
+    });
+  });
+
+program.parse(process.argv);

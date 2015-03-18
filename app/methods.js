@@ -1,5 +1,5 @@
 var utils = require('./utils');
-var mongo = require('./mongo');
+var pg = require('./pg');
 
 var api = {
   get: get,
@@ -16,26 +16,40 @@ function get(req, res, next) {
 
   if(parts.length === 1) {
     // Get All Documents
-    mongo.getCollection(parts[0], function(err, items) {
+    pg.getAll(parts[0], function(err, items) {
       if(err) {  return res.status(500).send(err.message); }
       res.json(items);
     });
   } else if(parts.length === 2) {
     // Get Document By Id
-    mongo.getById(parts[0], parts[1], function(err, item) {
+    pg.getById(parts[0], parts[1], function(err, item) {
       if(err) {  return res.status(500).send(err.message); }
-      res.json(item || {});
+      if(item.length === 1) {
+        res.json(item[0]);
+      } else {
+        res.json(item);
+      }
     });
   } else {
-    // Get Documents By Search
+    var filter = parts.reduce(function(memo, part, index) {
+      if(index && index%2) {
+        var argument = decodeURI(parts[index+1]);
+        memo[part] = isNaN(+argument) ? argument : +argument;
+      }
+      return memo;
+    }, {});
+    pg.getWithFilter(parts[0], filter, function(err, items) {
+      res.json(items);
+    });
   }
 }
 
 function post(req, res) {
   var parts = getPathParts(req);
+  console.log(parts);
 
   if(parts.length === 1) {
-    mongo.insertDocument(parts[0], req.body, function(err, result) {
+    pg.insertDocument(parts[0], req.body, function(err, result) {
       if(err) {  return res.status(500).send(err.message); }
       if(result.length === 1) {
         res.json(result[0]);
@@ -44,7 +58,7 @@ function post(req, res) {
       }
     });
   } else if(parts.length === 2) {
-    mongo.updateDocument(parts[0], parts[1], req.body, function(err, result) {
+    pg.updateDocument(parts[0], parts[1], req.body, function(err, result) {
       if(err) {  return res.status(500).send(err.message); }
       if(result > 0) {
         get(req, res);
@@ -57,9 +71,9 @@ function post(req, res) {
 
 function remove(req, res) {
   var parts = getPathParts(req);
-  mongo.removeDocument(parts[0], parts[1], function(err, result) {
+  pg.removeDocument(parts[0], parts[1], function(err, result) {
     if(err) {  return res.status(500).send(err.message); }
-    res.send('Successfully removed document from collection ' + parts[0] + ' with id ' + parts[1]);
+    res.json(result);
   });
 }
 
