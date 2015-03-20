@@ -10,7 +10,8 @@ var api = {
   getWithFilter: getWithFilter,
   insertDocument: insertDocument,
   updateDocument: updateDocument,
-  removeDocument: removeDocument
+  removeDocument: removeDocument,
+  _tableExists: _tableExists
 }
 
 run("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';", function(err, result) {

@@ -3,6 +3,7 @@ var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
 var plus = google.plus('v1');
 var conf = require('nconf');
+var pg = require('./pg');
 
 conf.argv().env().file('./config/' + conf.get('NODE_ENV')  + '.json');
 
@@ -11,6 +12,7 @@ var api = {
   url: url,
   environment: environment
 }
+var userTableName = conf.get('USER_TABLE_NAME');
 
 function getClient() {
   return oauth2Client = new OAuth2(
@@ -40,18 +42,39 @@ function login(req, res) {
     if(!err) {
       oauth2Client.setCredentials(tokens);
       plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, response) {
-        var user = {
-          gender: response.gender,
-          email: response.emails[0].value,
-          displayName: response.displayName,
-          name: response.name,
-          avatar: response.image.url
-        };
-        req.session.user = user;
-        res.redirect('/app');
+        var user = _getUser(response, function(err, user) {
+          req.session.user = user;
+          res.redirect('/app');
+        });
       });
     }
   });
+}
+
+function _getUser(response, callback) {
+  var email = response.emails[0].value;
+  var user = {
+    gender: response.gender,
+    email: response.emails[0].value,
+    displayName: response.displayName,
+    name: response.name,
+    avatar: response.image.url
+  };
+  if(pg._tableExists(userTableName)) {
+    pg.getWithFilter(userTableName, {email: user.email}, function(err, results) {
+      if(results.length) {
+        callback(null, results[0]);
+      } else {
+        pg.insertDocument(userTableName, user, function(err, result) {
+          callback(null, result);
+        });
+      }
+    });
+  } else {
+    pg.insertDocument(userTableName, user, function(err, result) {
+      callback(null, result);
+    });
+  }
 }
 
 function environment(req, res) {

@@ -2,7 +2,7 @@
   "name": "peanav-server",
   "version": "0.0.0",
   "description": "A starter backend for my projects",
-  "main": "index.js",
+  "main": "bastard.js",
   "bin": {
     "bastard": "./bin/bastard"
   },
