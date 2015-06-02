@@ -1,16 +1,19 @@
-var login = require('./app/login');
+var loginHandler = require('./app/login');
+var postgresBastard = require('./app/postgres/postgresBastard');
 var methods = require('./app/methods');
 
-function init(app) {
-  app.get('/loginurl', login.url);
-  app.get('/loginCallback', login.login);
-  app.get('/environment', login.environment);
+function db(app, connectionString) {
+  var db = new postgresBastard(connectionString);
+  methods.setupApp(app, db);
+}
 
-  app.get('*', methods.get);
-  app.post('*', methods.post);
-  app.delete('*', methods.remove);
+function login(app) {
+  app.get('/loginurl', loginHandler.url);
+  app.get('/loginCallback', loginHandler.login);
+  app.get('/environment', loginHandler.environment);
 }
 
 module.exports = {
-  init: init
+  db: db,
+  login: login
 }

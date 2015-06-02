@@ -29,4 +29,34 @@ program
     });
   });
 
+program
+  .command('create [tableName')
+  .description('Create table')
+  .action(function(tableName) {
+    pg._tableExists(tableName).then(function(exists) {
+      if(exists) {
+        console.log('ERROR: Table "' + tableName + '" already exists');
+      } else {
+        pg.createTable(tableName, function(result) {
+          console.log('SUCCESS: Created table "' + tableName + '"');
+        });
+      }
+    });
+  });
+
+program
+  .command('user_scope [tableName]')
+  .description('Add user scoping to the table')
+  .action(function(tableName) {
+    pg._tableExists(tableName).then(function(exists) {
+      if(exists) {
+        pg.addUserScopeToTable(tableName, function() {
+          console.log('SUCCESS: Added user scope to "' + tableName + '"');
+        });
+      } else {
+        console.log('ERROR: Table "' + tableName + '" does not exist');
+      }
+    });
+  });
+
 program.parse(process.argv);

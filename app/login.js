@@ -3,7 +3,7 @@ var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
 var plus = google.plus('v1');
 var conf = require('nconf');
-var pg = require('./pg');
+var pg = require('./postgres/postgresBastard');
 
 conf.argv().env().file('./config/' + conf.get('NODE_ENV')  + '.json');
 

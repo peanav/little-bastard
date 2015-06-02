@@ -24,6 +24,7 @@
     "node-uuid": "~1.4.3",
     "pg": "~4.3.0",
     "commander": "~2.7.1",
-    "inquirer": "~0.8.0"
+    "inquirer": "~0.8.0",
+    "bluebird": "~2.9.25"
   }
 }
