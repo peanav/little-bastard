@@ -21,7 +21,7 @@ function getPathParts(req) {
 }
 
 function get(database, req, res, next) {
-  var method, parts = getPathParts(req);
+  var method, sort, parts = getPathParts(req);
 
   if(parts.length === 1) {
     method = findAll;
@@ -31,11 +31,19 @@ function get(database, req, res, next) {
     method = find;
   }
 
-  method(database, res, parts);
+  if(req.query._sort) {
+    sort =  {
+      key: req.query._sort,
+      order: req.query._order || 'asc',
+      type: req.query._sort_type
+    }
+  }
+
+  method(database, res, parts, sort);
 }
 
-function findAll(database, res, parts) {
-  database.findAll(parts[0]).then(function(items) {
+function findAll(database, res, parts, sort) {
+  database.findAll(parts[0], sort).then(function(items) {
     res.json(items);
   }, function(err) {
     return res.status(500).send(err.message || err);
@@ -54,7 +62,7 @@ function findOne(database, res, parts) {
   });
 }
 
-function find(database, res, parts) {
+function find(database, res, parts, sort) {
   var filter = parts.reduce(function(memo, part, index) {
     if(index && index%2) {
       var argument = decodeURI(parts[index+1]);
@@ -63,7 +71,7 @@ function find(database, res, parts) {
     return memo;
   }, {});
 
-  return database.find(parts[0], filter).then(function(items) {
+  return database.find(parts[0], filter, sort).then(function(items) {
     res.json(items);
   }, function(err) {
     return res.status(500).send(err.message || err);

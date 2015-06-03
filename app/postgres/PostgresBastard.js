@@ -8,8 +8,19 @@ function postgresBastard(connectionString) {
   this.DB = new DB(connectionString);
 }
 
-postgresBastard.prototype.findAll = function(tableName) {
-  var query = 'SELECT * from ' + tableName + ';';
+function addSortByToQuery(query, sort) {
+  if(!sort) { return query; }
+  if(sort.type == 'numeric') {
+    query += ' ORDER BY cast(_data->>\'' + sort.key + '\' as numeric) ' + sort.order;
+  } else if(sort) {
+    query += ' ORDER BY _data->>\'' + sort.key + '\' ' + sort.order;
+  }
+  query += ';';
+  return query;
+}
+
+postgresBastard.prototype.findAll = function(tableName, sort) {
+  var query = addSortByToQuery('SELECT * FROM ' + tableName, sort);
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
@@ -39,8 +50,8 @@ postgresBastard.prototype.findOne = function(tableName, id) {
   }.bind(this));
 }
 
-postgresBastard.prototype.find = function(tableName, filter) {
-  var query = "select * from " + tableName + " where _data @> '" + JSON.stringify(filter) + "';";
+postgresBastard.prototype.find = function(tableName, filter, sort) {
+  var query = addSortByToQuery("select * from " + tableName + " where _data @> '" + JSON.stringify(filter) + "'", sort);
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
