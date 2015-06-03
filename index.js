@@ -18,8 +18,9 @@ app.use(session({
   secret: conf.get('SESSION_SECRET')
 }));
 
-bastard.db(app, 'postgres://localhost/test');
-bastard.login(app);
+
+//bastard.login(app);
+app.use('/api/v1', bastard.db('postgres://localhost/test'));
 
 var port = conf.get('PORT') || 3000;
 var server = app.listen(port, function() {

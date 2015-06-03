@@ -1,10 +1,15 @@
 var loginHandler = require('./app/login');
 var postgresBastard = require('./app/postgres/postgresBastard');
 var methods = require('./app/methods');
+var database;
 
-function db(app, connectionString) {
-  var db = new postgresBastard(connectionString);
-  methods.setupApp(app, db);
+function db(connectionString) {
+  database = new postgresBastard(connectionString);
+  return _apiMiddleware;
+}
+
+function _apiMiddleware(req, res, next) {
+  methods.process(database, req, res);
 }
 
 function login(app) {
