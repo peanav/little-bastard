@@ -1,21 +1,28 @@
 var loginHandler = require('./app/login');
-var postgresBastard = require('./app/postgres/postgresBastard');
 var methods = require('./app/methods');
-var database;
 
-function db(connectionString) {
-  database = new postgresBastard(connectionString);
-  return _apiMiddleware;
+function db(bastard) {
+  return function(req, res, next) {
+    methods.process(bastard, req, res, next);
+  }
 }
 
-function _apiMiddleware(req, res, next) {
-  methods.process(database, req, res);
-}
+function login(bastard) {
+  //app.get('/loginurl', login.url);
+  //app.get('/loginCallback', login.login);
+  //app.get('/environment', login.environment);
 
-function login(app) {
-  app.get('/loginurl', loginHandler.url);
-  app.get('/loginCallback', loginHandler.login);
-  app.get('/environment', loginHandler.environment);
+  return function(req, res, next) {
+    if(req.path === '/loginurl') {
+      loginHandler.url(req, res);
+    } else if(req.path === '/loginCallback') {
+      loginHandler.login(bastard, req, res);
+    } else if(req.path === '/environment') {
+      loginHandler.environment(req, res);
+    } else {
+      next();
+    }
+  }
 }
 
 module.exports = {

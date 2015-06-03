@@ -33,9 +33,9 @@ function get(database, req, res, next) {
 
   if(req.query._sort) {
     sort =  {
-      key: req.query._sort,
+      key: req.query._sort.indexOf(':') > -1 ? req.query._sort.split(':')[0] : req.query._sort,
       order: req.query._order || 'asc',
-      type: req.query._sort_type
+      type: req.query._sort.indexOf(':') > -1 ? req.query._sort.split(':')[1] : undefined,
     }
   }
 

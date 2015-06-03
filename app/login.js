@@ -3,16 +3,16 @@ var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
 var plus = google.plus('v1');
 var conf = require('nconf');
-var pg = require('./postgres/postgresBastard');
 
 conf.argv().env().file('./config/' + conf.get('NODE_ENV')  + '.json');
 
+var userTableName = conf.get('USER_TABLE_NAME');
+
 var api = {
   login: login,
-  url: url,
-  environment: environment
+  environment: environment,
+  url: url
 }
-var userTableName = conf.get('USER_TABLE_NAME');
 
 function getClient() {
   return oauth2Client = new OAuth2(
@@ -32,7 +32,7 @@ function url(req, res) {
   res.send(url);
 }
 
-function login(req, res) {
+function login(bastard, req, res) {
   var oauth2Client = getClient();
 
   oauth2Client.getToken(req.query.code, function(err, tokens) {
@@ -42,7 +42,7 @@ function login(req, res) {
     if(!err) {
       oauth2Client.setCredentials(tokens);
       plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, response) {
-        var user = _getUser(response, function(err, user) {
+        var user = _getUser(bastard, response).then(function(user) {
           req.session.user = user;
           res.redirect('/app');
         });
@@ -51,7 +51,7 @@ function login(req, res) {
   });
 }
 
-function _getUser(response, callback) {
+function _getUser(bastard, response, callback) {
   var email = response.emails[0].value;
   var user = {
     gender: response.gender,
@@ -60,21 +60,16 @@ function _getUser(response, callback) {
     name: response.name,
     avatar: response.image.url
   };
-  if(pg._tableExists(userTableName)) {
-    pg.getWithFilter(userTableName, {email: user.email}, function(err, results) {
-      if(results.length) {
-        callback(null, results[0]);
-      } else {
-        pg.insertDocument(userTableName, user, function(err, result) {
-          callback(null, result);
-        });
-      }
-    });
-  } else {
-    pg.insertDocument(userTableName, user, function(err, result) {
-      callback(null, result);
-    });
-  }
+
+  return bastard.find(userTableName, {email: user.email}).then(function(results) {
+    if(results.length) {
+      return results[0];
+    } else {
+      return bastard.insertDocument(userTableName, user).then(function(result) {
+        return result;
+      });
+    }
+  });
 }
 
 function environment(req, res) {

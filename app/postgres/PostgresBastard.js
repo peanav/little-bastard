@@ -13,7 +13,7 @@ function addSortByToQuery(query, sort) {
   if(sort.type == 'numeric') {
     query += ' ORDER BY cast(_data->>\'' + sort.key + '\' as numeric) ' + sort.order;
   } else if(sort) {
-    query += ' ORDER BY _data->>\'' + sort.key + '\' ' + sort.order;
+    query += ' ORDER BY _data->\'' + sort.key + '\' ' + sort.order;
   }
   query += ';';
   return query;
@@ -59,7 +59,7 @@ postgresBastard.prototype.find = function(tableName, filter, sort) {
         return result.rows.map(_rowToObject);
       });
     } else {
-      return Promise.reject(new Error('Table "' + tableName + '" does not exist'));
+      return [];
     }
   }.bind(this));
 }
