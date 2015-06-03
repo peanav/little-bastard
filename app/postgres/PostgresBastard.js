@@ -22,6 +22,39 @@ postgresBastard.prototype.findAll = function(tableName) {
   }.bind(this));
 }
 
+postgresBastard.prototype.findOne = function(tableName, id) {
+  var query = "select * from " + tableName + " where id='" + id + "';";
+  console.log(query);
+
+  return this.DB.tableExists(tableName).then(function(exists) {
+    if(exists) {
+      return this.DB.run(query).then(function(result) {
+        console.log(result);
+        if(!result || !result.rows || !result.rows.length) { 
+          return Promise.reject(new Error('Row with id: ' + id + ' not found in table "' + tableName + '"'));
+        }
+        return _rowToObject(result.rows[0]);
+      });
+    } else {
+      return Promise.reject(new Error('Table "' + tableName + '" does not exist'));
+    }
+  }.bind(this));
+}
+
+postgresBastard.prototype.find = function(tableName, filter) {
+  var query = "select * from " + tableName + " where _data @> '" + JSON.stringify(filter) + "';";
+
+  return this.DB.tableExists(tableName).then(function(exists) {
+    if(exists) {
+      return this.DB.run(query).then(function(result) {
+        return result.rows.map(_rowToObject);
+      });
+    } else {
+      return Promise.reject(new Error('Table "' + tableName + '" does not exist'));
+    }
+  }.bind(this));
+}
+
 postgresBastard.prototype.insertDocument = function(tableName, data) {
   return this.DB.createTable(tableName).then(function() {
     var query = 'insert into ' + tableName + ' (_created_date, _last_updated_date, _data) values (' +

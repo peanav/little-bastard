@@ -34,18 +34,19 @@ function findAll(res, parts) {
   database.findAll(parts[0]).then(function(items) {
     res.json(items);
   }, function(err) {
-    return res.status(500).send(err.message);
+    return res.status(500).send(err.message || err);
   });
 }
 
 function findOne(res, parts) {
-  database.getById(parts[0], parts[1], function(err, item) {
-    if(err) {  return res.status(500).send(err.message); }
+  database.findOne(parts[0], parts[1]).then(function(item) {
     if(item.length === 1) {
       res.json(item[0]);
     } else {
       res.json(item);
     }
+  }, function(err) {
+    return res.status(500).send(err.message || err);
   });
 }
 
@@ -57,9 +58,14 @@ function find(res, parts) {
     }
     return memo;
   }, {});
-  database.getWithFilter(parts[0], filter, function(err, items) {
+  console.log(filter);
+
+  return database.find(parts[0], filter).then(function(items) {
     res.json(items);
+  }, function(err) {
+    return res.status(500).send(err.message || err);
   });
+;
 }
 
 
