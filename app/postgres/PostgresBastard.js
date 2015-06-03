@@ -24,12 +24,10 @@ postgresBastard.prototype.findAll = function(tableName) {
 
 postgresBastard.prototype.findOne = function(tableName, id) {
   var query = "select * from " + tableName + " where id='" + id + "';";
-  console.log(query);
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
       return this.DB.run(query).then(function(result) {
-        console.log(result);
         if(!result || !result.rows || !result.rows.length) { 
           return Promise.reject(new Error('Row with id: ' + id + ' not found in table "' + tableName + '"'));
         }
@@ -65,10 +63,29 @@ postgresBastard.prototype.insertDocument = function(tableName, data) {
   }.bind(this));
 }
 
+postgresBastard.prototype.updateDocument = function(tableName, id, data) {
+  var query = "update " + tableName + " set _last_updated_date=now(), _data='" +
+    JSON.stringify(data) + "' where id='" + id + "';";
+  return this.DB.run(query).then(function (result) {
+    return result.rowCount;
+  });
+}
+
+postgresBastard.prototype.removeDocument = function(tableName, id) {
+  var query = "delete from " + tableName + " where id='" + id + "';";
+  return this.DB.run(query).then(function(result) {
+    if(result.rowCount === 1) {
+      return {message: "Successfully removed row \"" + id + "\" from table " + tableName };
+    } else {
+      return Promise.reject(new Error("Did not remove a row"));
+    }
+  });
+}
+
 function _rowToObject(row) {
   var keys = Object.keys(row._data);
   var returnObj = { 
-    id: row.id,
+    _id: row.id,
     _created_date: row._created_date,
     _last_updated_date: row._last_updated_date
   };
