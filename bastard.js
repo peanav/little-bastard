@@ -3,7 +3,7 @@ var methods = require('./app/methods');
 
 function db(bastard) {
   return function(req, res, next) {
-    methods.process(bastard, req, res, next);
+    methods.process(bastard, req, res, next, 20);
   }
 }
 

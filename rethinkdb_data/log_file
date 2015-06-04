@@ -1,0 +1,50 @@
+2015-06-03T16:44:49.666018000 0.044271s notice: Recursively removing directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/tmp
+2015-06-03T16:44:49.667260000 0.045515s notice: Initializing directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-03T16:44:49.667335000 0.045587s info: Creating a default database for your convenience. (This is because you ran 'rethinkdb' without 'create', 'serve', or '--join', and the directory '/Users/paulnavasard/code/personal/peanav-server/rethinkdb_data' did not already exist or is empty.)
+2015-06-03T16:44:49.667362000 0.045614s notice: Running rethinkdb 1.16.2-1 (CLANG 6.0 (clang-600.0.56))...
+2015-06-03T16:44:49.671664000 0.049916s notice: Running on Darwin 14.3.0 x86_64
+2015-06-03T16:44:49.671692000 0.049944s notice: Loading data from directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-03T16:44:49.926472000 0.304724s info: Automatically using cache size of 2126 MB
+2015-06-03T16:44:49.927890000 0.306142s notice: Listening for intracluster connections on port 29015
+2015-06-03T16:44:49.930187000 0.308439s notice: Listening for client driver connections on port 28015
+2015-06-03T16:44:49.930279000 0.308531s notice: Listening for administrative HTTP connections on port 8080
+2015-06-03T16:44:49.930281000 0.308533s notice: Listening on addresses: 127.0.0.1, ::1
+2015-06-03T16:44:49.930285000 0.308536s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-06-03T16:44:49.930288000 0.308540s notice: Server ready, "PEANAV_lhy" 1680eb0d-e169-4dc6-8267-a3d5dd27f10f
+2015-06-03T16:44:50.293061000 0.671313s notice: A newer version of the RethinkDB server is available: 2.0.2. You can read the changelog at <https://github.com/rethinkdb/rethinkdb/releases>.
+2015-06-03T16:56:38.966155000 709.356139s notice: Server got SIGINT from pid 525, uid 501; shutting down...
+2015-06-03T16:56:38.966326000 709.356310s notice: Shutting down client connections...
+2015-06-03T16:56:38.966591000 709.356575s notice: All client connections closed.
+2015-06-03T16:56:38.966604000 709.356588s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2015-06-03T16:56:38.972670000 709.362654s notice: Storage engine shut down.
+2015-06-03T16:56:40.086432000 0.005987s notice: Running rethinkdb 1.16.2-1 (CLANG 6.0 (clang-600.0.56))...
+2015-06-03T16:56:40.089749000 0.009300s notice: Running on Darwin 14.3.0 x86_64
+2015-06-03T16:56:40.089779000 0.009329s notice: Loading data from directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-03T16:56:40.196404000 0.115954s info: Automatically using cache size of 2010 MB
+2015-06-03T16:56:40.196893000 0.116443s notice: Listening for intracluster connections on port 29015
+2015-06-03T16:56:40.197723000 0.117272s notice: Listening for client driver connections on port 28015
+2015-06-03T16:56:40.197804000 0.117353s notice: Listening for administrative HTTP connections on port 8080
+2015-06-03T16:56:40.197805000 0.117355s notice: Listening on addresses: 127.0.0.1, ::1
+2015-06-03T16:56:40.197808000 0.117358s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-06-03T16:56:40.197811000 0.117361s notice: Server ready, "PEANAV_lhy" 1680eb0d-e169-4dc6-8267-a3d5dd27f10f
+2015-06-03T16:56:40.299962000 0.219512s notice: A newer version of the RethinkDB server is available: 2.0.2. You can read the changelog at <https://github.com/rethinkdb/rethinkdb/releases>.
+2015-06-03T17:00:52.536901000 252.460615s notice: Server got SIGINT from pid 525, uid 501; shutting down...
+2015-06-03T17:00:52.537019000 252.460733s notice: Shutting down client connections...
+2015-06-03T17:00:52.537190000 252.460904s notice: All client connections closed.
+2015-06-03T17:00:52.537198000 252.460912s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2015-06-03T17:00:52.537551000 252.461265s notice: Storage engine shut down.
+2015-06-03T17:06:40.058937000 0.029420s notice: Running rethinkdb 2.0.2 (CLANG 6.1.0 (clang-602.0.53))...
+2015-06-03T17:06:40.064112000 0.034590s notice: Running on Darwin 14.3.0 x86_64
+2015-06-03T17:06:40.064172000 0.034648s notice: Loading data from directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-03T17:06:40.150752000 0.121229s info: Automatically using cache size of 1882 MB
+2015-06-03T17:06:40.151334000 0.121811s notice: Listening for intracluster connections on port 29015
+2015-06-03T17:06:40.152990000 0.123467s notice: Listening for client driver connections on port 28015
+2015-06-03T17:06:40.153089000 0.123565s notice: Listening for administrative HTTP connections on port 8080
+2015-06-03T17:06:40.153100000 0.123576s notice: Listening on addresses: 127.0.0.1, ::1
+2015-06-03T17:06:40.153104000 0.123580s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-06-03T17:06:40.153107000 0.123583s notice: Server ready, "PEANAV_lhy" 1680eb0d-e169-4dc6-8267-a3d5dd27f10f
+2015-06-03T17:31:14.100138000 1474.095001s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/5768a000-fb70-481d-8139-cc5642907ef0
+2015-06-03T17:31:14.100152000 1474.095015s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/919918db-a977-4ef6-85c9-40a3164865b5
+2015-06-03T23:46:37.383840000 10409.410104s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/504b63c5-494c-460f-9b6a-68d6f6715d15
+2015-06-03T23:46:37.383872000 10409.410132s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/3dc7fe4b-508e-480f-be52-64a11ddc648c
+2015-06-03T23:48:41.314833000 10533.343143s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/8939d89b-3c10-4935-98b3-d670e3a1cbc2

@@ -4,7 +4,8 @@ var session = require('express-session');
 var uuid = require('node-uuid');
 var conf = require('nconf');
 var bastard = require('./bastard');
-var PostgresBastard = require('./app/postgres/postgresBastard');
+//var PostgresBastard = require('./app/postgres/postgresBastard');
+var RethinkBastard = require('./app/rethinkdb/RethinkBastard');
 
 conf.argv().env().file('./config/' + conf.get('NODE_ENV')  + '.json');
 
@@ -19,10 +20,12 @@ app.use(session({
   secret: conf.get('SESSION_SECRET')
 }));
 
-var postgres = new PostgresBastard('postgres://localhost/test');
 
-app.use('/api/v1', bastard.db(postgres));
-app.use(bastard.login(postgres));
+//var postgres = new PostgresBastard('postgres://localhost/test');
+var rethink = new RethinkBastard();
+app.use('/api/v1', bastard.db(rethink));
+//app.use(bastard.login(postgres));
+
 
 var port = conf.get('PORT') || 3000;
 var server = app.listen(port, function() {

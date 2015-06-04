@@ -12,7 +12,7 @@ var methods = {
 }
 
 
-function process(database, req, res) {
+function process(database, req, res, next) {
   methods[req.method.toLowerCase()](database, req, res);
 }
 
@@ -20,7 +20,7 @@ function getPathParts(req) {
   return req.path.split('/').filter(utils.isTruthy);
 }
 
-function get(database, req, res, next) {
+function get(database, req, res) {
   var method, sort, parts = getPathParts(req);
 
   if(parts.length === 1) {
@@ -33,9 +33,8 @@ function get(database, req, res, next) {
 
   if(req.query._sort) {
     sort =  {
-      key: req.query._sort.indexOf(':') > -1 ? req.query._sort.split(':')[0] : req.query._sort,
-      order: req.query._order || 'asc',
-      type: req.query._sort.indexOf(':') > -1 ? req.query._sort.split(':')[1] : undefined,
+      key: req.query._sort,
+      order: req.query._order || 'asc'
     }
   }
 
@@ -52,6 +51,9 @@ function findAll(database, res, parts, sort) {
 
 function findOne(database, res, parts) {
   database.findOne(parts[0], parts[1]).then(function(item) {
+    if(!item) {
+      return res.status(404).send('Document with id: ' + parts[1] + ' not found in resource "' + parts[0] + '"');
+    }
     if(item.length === 1) {
       res.json(item[0]);
     } else {
@@ -98,8 +100,8 @@ function post(database, req, res) {
     autogenFields.forEach(function(field) { delete req.body[field]; });
 
     database.updateDocument(parts[0], parts[1], req.body).then(function(result) {
-      if(result > 0) {
-        get(req, res);
+      if(result) {
+        res.json(result);
       } else {
         req.status(304).send('Nothing was updated');
       }

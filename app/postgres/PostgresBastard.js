@@ -10,9 +10,7 @@ function postgresBastard(connectionString) {
 
 function addSortByToQuery(query, sort) {
   if(!sort) { return query; }
-  if(sort.type == 'numeric') {
-    query += ' ORDER BY cast(_data->>\'' + sort.key + '\' as numeric) ' + sort.order;
-  } else if(sort) {
+  if(sort) {
     query += ' ORDER BY _data->\'' + sort.key + '\' ' + sort.order;
   }
   query += ';';
