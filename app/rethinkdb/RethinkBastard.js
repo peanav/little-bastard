@@ -34,7 +34,17 @@ RethinkBastard.prototype.findOne = function(tableName, id) {
   });
 }
 
-RethinkBastard.prototype.find = function(tableName, filter) {}
+RethinkBastard.prototype.find = function(tableName, filter, sort) {
+  return this._exists(tableName, function() {
+    if(sort) {
+      return this.r.table(tableName).filter(filter).orderBy(this._getSortObject(sort));
+    } else {
+      return this.r.table(tableName).filter(filter);
+    }
+  }, function() {
+    return [];
+  });
+}
 
 RethinkBastard.prototype.insertDocument = function(tableName, data) {
   //Add the date to the object
