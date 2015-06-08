@@ -48,3 +48,66 @@
 2015-06-03T23:46:37.383840000 10409.410104s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/504b63c5-494c-460f-9b6a-68d6f6715d15
 2015-06-03T23:46:37.383872000 10409.410132s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/3dc7fe4b-508e-480f-be52-64a11ddc648c
 2015-06-03T23:48:41.314833000 10533.343143s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/8939d89b-3c10-4935-98b3-d670e3a1cbc2
+2015-06-04T09:54:54.017570000 13120.930761s notice: Server got SIGINT from pid 525, uid 501; shutting down...
+2015-06-04T09:54:54.017908000 13120.931096s notice: Shutting down client connections...
+2015-06-04T09:54:54.018040000 13120.931228s notice: All client connections closed.
+2015-06-04T09:54:54.018044000 13120.931232s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2015-06-04T09:54:54.028475000 13120.941663s notice: Storage engine shut down.
+2015-06-04T10:57:19.762743000 2.269640s notice: Running rethinkdb 2.0.2 (CLANG 6.1.0 (clang-602.0.53))...
+2015-06-04T10:57:19.767081000 2.273974s notice: Running on Darwin 14.3.0 x86_64
+2015-06-04T10:57:19.767118000 2.274010s notice: Loading data from directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-04T10:57:19.824933000 2.331825s info: Automatically using cache size of 4148 MB
+2015-06-04T10:57:19.825451000 2.332343s notice: Listening for intracluster connections on port 29015
+2015-06-04T10:57:19.826766000 2.333659s notice: Listening for client driver connections on port 28015
+2015-06-04T10:57:19.826859000 2.333751s notice: Listening for administrative HTTP connections on port 8080
+2015-06-04T10:57:19.826861000 2.333753s notice: Listening on addresses: 127.0.0.1, ::1
+2015-06-04T10:57:19.826864000 2.333756s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-06-04T10:57:19.826867000 2.333759s notice: Server ready, "PEANAV_lhy" 1680eb0d-e169-4dc6-8267-a3d5dd27f10f
+2015-06-04T11:13:29.707685000 953.637315s notice: Server got SIGINT from pid 525, uid 501; shutting down...
+2015-06-04T11:13:29.707984000 953.637613s notice: Shutting down client connections...
+2015-06-04T11:13:29.710587000 953.640216s notice: All client connections closed.
+2015-06-04T11:13:29.710597000 953.640226s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2015-06-04T11:13:29.722545000 953.652175s notice: Storage engine shut down.
+2015-06-04T11:27:22.011191000 0.004657s notice: Running rethinkdb 2.0.2 (CLANG 6.1.0 (clang-602.0.53))...
+2015-06-04T11:27:22.014522000 0.007985s notice: Running on Darwin 14.3.0 x86_64
+2015-06-04T11:27:22.014553000 0.008015s notice: Loading data from directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-04T11:27:22.088710000 0.082172s info: Automatically using cache size of 2746 MB
+2015-06-04T11:27:22.089228000 0.082690s notice: Listening for intracluster connections on port 29015
+2015-06-04T11:27:22.090649000 0.084111s notice: Listening for client driver connections on port 28015
+2015-06-04T11:27:22.090832000 0.084294s notice: Listening for administrative HTTP connections on port 8080
+2015-06-04T11:27:22.090834000 0.084295s notice: Listening on addresses: 127.0.0.1, ::1
+2015-06-04T11:27:22.090837000 0.084299s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-06-04T11:27:22.090838000 0.084300s notice: Server ready, "PEANAV_lhy" 1680eb0d-e169-4dc6-8267-a3d5dd27f10f
+2015-06-04T19:45:09.499243000 22747.352937s notice: Server got SIGINT from pid 525, uid 501; shutting down...
+2015-06-04T19:45:09.499364000 22747.353057s notice: Shutting down client connections...
+2015-06-04T19:45:09.499434000 22747.353128s notice: All client connections closed.
+2015-06-04T19:45:09.499437000 22747.353131s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2015-06-04T19:45:09.507236000 22747.360930s notice: Storage engine shut down.
+2015-06-04T19:45:22.378435000 0.013611s notice: Running rethinkdb 2.0.2 (CLANG 6.1.0 (clang-602.0.53))...
+2015-06-04T19:45:22.382813000 0.017986s notice: Running on Darwin 14.3.0 x86_64
+2015-06-04T19:45:22.382843000 0.018015s notice: Loading data from directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-04T19:45:22.442404000 0.077609s info: Automatically using cache size of 1398 MB
+2015-06-04T19:45:22.442910000 0.078115s notice: Listening for intracluster connections on port 29015
+2015-06-04T19:45:22.444340000 0.079545s notice: Listening for client driver connections on port 28015
+2015-06-04T19:45:22.444497000 0.079702s notice: Listening for administrative HTTP connections on port 8080
+2015-06-04T19:45:22.444501000 0.079706s notice: Listening on addresses: 127.0.0.1, ::1
+2015-06-04T19:45:22.444508000 0.079713s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-06-04T19:45:22.444517000 0.079722s notice: Server ready, "PEANAV_lhy" 1680eb0d-e169-4dc6-8267-a3d5dd27f10f
+2015-06-04T19:59:27.447061000 845.096174s notice: Server got SIGINT from pid 525, uid 501; shutting down...
+2015-06-04T19:59:27.447168000 845.096281s notice: Shutting down client connections...
+2015-06-04T19:59:27.447276000 845.096389s notice: All client connections closed.
+2015-06-04T19:59:27.447284000 845.096397s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2015-06-04T19:59:27.454549000 845.103662s notice: Storage engine shut down.
+2015-06-07T08:48:39.503130000 0.118684s notice: Running rethinkdb 2.0.2 (CLANG 6.1.0 (clang-602.0.53))...
+2015-06-07T08:48:39.510184000 0.125735s notice: Running on Darwin 14.3.0 x86_64
+2015-06-07T08:48:39.510238000 0.125788s notice: Loading data from directory /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data
+2015-06-07T08:48:39.592414000 0.207964s info: Automatically using cache size of 4917 MB
+2015-06-07T08:48:39.593507000 0.209057s notice: Listening for intracluster connections on port 29015
+2015-06-07T08:48:39.596278000 0.211828s notice: Listening for client driver connections on port 28015
+2015-06-07T08:48:39.596432000 0.211981s notice: Listening for administrative HTTP connections on port 8080
+2015-06-07T08:48:39.596433000 0.211983s notice: Listening on addresses: 127.0.0.1, ::1
+2015-06-07T08:48:39.596436000 0.211986s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-06-07T08:48:39.596437000 0.211987s notice: Server ready, "PEANAV_lhy" 1680eb0d-e169-4dc6-8267-a3d5dd27f10f
+2015-06-08T06:47:35.832711000 14305.638533s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/d1cd7ec3-2ddd-4b5f-aca8-cbf63a2033a2
+2015-06-08T06:47:35.832739000 14305.638556s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/a383f487-0948-4444-8dfa-5d64391c81b9
+2015-06-08T06:47:35.832780000 14305.638597s notice: Removing file /Users/paulnavasard/code/personal/peanav-server/rethinkdb_data/c0644361-8c92-4466-a97d-7f4df7d42657

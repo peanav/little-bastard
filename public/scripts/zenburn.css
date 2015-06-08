@@ -1,0 +1,25 @@
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: rgba(193, 245, 209, 0.7);
+  -webkit-text-size-adjust: none;
+}
+
+.diff .hljs-deletion,
+.hljs-string,
+.hljs-tag .hljs-value,
+.hljs-preprocessor,
+.hljs-pragma,
+.hljs-built_in,
+.smalltalk .hljs-class,
+.smalltalk .hljs-localvars,
+.smalltalk .hljs-array,
+.css .hljs-rule .hljs-value,
+.hljs-attr_selector,
+.hljs-pseudo,
+.apache .hljs-cbracket,
+.tex .hljs-formula,
+.coffeescript .hljs-attribute {
+  color: #99DBF0;
+}

@@ -1,3 +1,5 @@
 node_modules
 *.swp
 config
+rethinkdb_data
+sessions
