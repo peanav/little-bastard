@@ -20,18 +20,24 @@ app.use(session({
 }));
 
 
-var postgres = new PostgresBastard('postgres://localhost/test');
-var rethink = new RethinkBastard();
-//app.use('/api/v2', bastard.db(postgres));
-app.use('/api/v1/', bastard.db(rethink));
-app.use(bastard.login(rethink));
-
+postgres();
 
 var port = conf.get('PORT') || 3000;
 var server = app.listen(port, function() {
   console.log("Lil' Bastard is running on port " + port);
 });
 
+function rethink() {
+  var rethink = new RethinkBastard();
+  app.use('/api/v1/', bastard.db(rethink));
+  app.use(bastard.login(rethink));
+}
+
+function postgres() {
+  var postgres = new PostgresBastard('postgres://localhost/test');
+  app.use('/api/v1/', bastard.db(postgres));
+  app.use(bastard.login(postgres));
+}
 
 //Cookie Session Stuff
 //app.use(session({

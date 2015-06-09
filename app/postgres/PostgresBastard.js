@@ -26,7 +26,7 @@ postgresBastard.prototype.findAll = function(tableName, sort) {
         return result.rows.map(_rowToObject);
       });
     } else {
-      return Promise.reject(new Error('Table "' + tableName + '" does not exist'));
+      return [];
     }
   }.bind(this));
 }
@@ -43,7 +43,7 @@ postgresBastard.prototype.findOne = function(tableName, id) {
         return _rowToObject(result.rows[0]);
       });
     } else {
-      return Promise.reject(new Error('Table "' + tableName + '" does not exist'));
+      return Promise.reject(new Error('Row with id: ' + id + ' not found in table "' + tableName + '"'));
     }
   }.bind(this));
 }
