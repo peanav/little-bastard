@@ -18,6 +18,17 @@ function addSortByToQuery(query, sort) {
   return query;
 }
 
+function addWhereClause(query, whereClause) {
+  query += ' WHERE ' + _.map(whereClause, _objectToString).join(' and ');
+  return query;
+
+  function _objectToString(value, key) {
+    var operator = (key === '_data' ? '@>' : '=');
+    if(_.isNaN(+value) && value !== "now()") { return key + operator + "'" + value + "'"; }
+    return key + operator + value;
+  }
+}
+
 postgresBastard.prototype.findAll = function(tableName, user, sort) {
   var query = addSortByToQuery('SELECT * FROM ' + tableName + ' WHERE _created_by_id=\'' + user._id + '\'', sort);
 
@@ -59,9 +70,7 @@ postgresBastard.prototype.find = function(tableName, user, filter, sort) {
     delete whereClause._created_by_id;
   }
 
-  var where = _.map(whereClause, _objectToString).join(' and ');
-
-  var query = addSortByToQuery("select * from " + tableName + " where " + where, sort);
+  var query = addSortByToQuery(addWhereClause("select * from " + tableName, whereClause), sort);
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
@@ -73,11 +82,6 @@ postgresBastard.prototype.find = function(tableName, user, filter, sort) {
     }
   }.bind(this));
 
-  function _objectToString(value, key) {
-    var operator = (key === '_data' ? '@>' : '=');
-    if(_.isNaN(+value) && value !== "now()") { return key + operator + "'" + value + "'"; }
-    return key + operator + value;
-  }
 }
 
 postgresBastard.prototype.insertDocument = function(tableName, user, data) {
