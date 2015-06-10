@@ -50,13 +50,18 @@ postgresBastard.prototype.findOne = function(tableName, id, user) {
 }
 
 postgresBastard.prototype.find = function(tableName, user, filter, sort) {
-  var query = "select * from " + tableName + " where _data @> '" + JSON.stringify(filter) + "'";
+  var whereClause = {
+    _data: JSON.stringify(filter),
+    _created_by_id: user._id
+  };
 
-  if(tableName !== 'app_users') {
-    query += " and _created_by_id='" + user._id + "'";
+  if(tableName === 'app_users') {
+    delete whereClause._created_by_id;
   }
 
-  query = addSortByToQuery(query, sort);
+  var where = _.map(whereClause, _objectToString).join(' and ');
+
+  var query = addSortByToQuery("select * from " + tableName + " where " + where, sort);
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
@@ -67,6 +72,12 @@ postgresBastard.prototype.find = function(tableName, user, filter, sort) {
       return [];
     }
   }.bind(this));
+
+  function _objectToString(value, key) {
+    var operator = (key === '_data' ? '@>' : '=');
+    if(_.isNaN(+value) && value !== "now()") { return key + operator + "'" + value + "'"; }
+    return key + operator + value;
+  }
 }
 
 postgresBastard.prototype.insertDocument = function(tableName, user, data) {
