@@ -1,4 +1,5 @@
 var Promise = require('bluebird');
+var _ = require('lodash');
 var DB = require('./DB');
 
 var currentTableNames;
@@ -95,11 +96,30 @@ postgresBastard.prototype.insertDocument = function(tableName, user, data) {
 }
 
 postgresBastard.prototype.updateDocument = function(tableName, id, user, data) {
-  var query = "update " + tableName + " set _last_updated_date=now(), _data='" +
-    JSON.stringify(data) + "' where id='" + id + "' AND _created_by_id='" + user._id + "';";
+  var updateParams = {
+    _last_updated_date: "now()",
+    _data: JSON.stringify(data)
+  }
+
+  var whereClause = {
+    id: id,
+    _created_by_id: user._id
+  };
+
+  if(tableName === 'app_users') { delete whereClause._created_by_id; }
+
+  var values = _.map(updateParams, _objectToString).join(',');
+  var where = _.map(whereClause, _objectToString).join(' and ');
+
+  var query = "update " + tableName + " set " + values + " where " + where;
   return this.DB.run(query).then(function (result) {
     return result.rowCount;
   });
+
+  function _objectToString(value, key) {
+    if(_.isNaN(+value) && value !== "now()") { return key + "='" + value + "'"; }
+    return key + '=' + value;
+  }
 }
 
 postgresBastard.prototype.removeDocument = function(tableName, id, user) {
