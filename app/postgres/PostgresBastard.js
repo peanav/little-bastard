@@ -17,8 +17,8 @@ function addSortByToQuery(query, sort) {
   return query;
 }
 
-postgresBastard.prototype.findAll = function(tableName, sort) {
-  var query = addSortByToQuery('SELECT * FROM ' + tableName, sort);
+postgresBastard.prototype.findAll = function(tableName, user, sort) {
+  var query = addSortByToQuery('SELECT * FROM ' + tableName + ' WHERE _created_by_id=\'' + user._id + '\'', sort);
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
@@ -31,8 +31,8 @@ postgresBastard.prototype.findAll = function(tableName, sort) {
   }.bind(this));
 }
 
-postgresBastard.prototype.findOne = function(tableName, id) {
-  var query = "select * from " + tableName + " where id='" + id + "';";
+postgresBastard.prototype.findOne = function(tableName, id, user) {
+  var query = "select * from " + tableName + " where id='" + id + "' AND _created_by_id='" + user._id + "';";
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
@@ -48,8 +48,14 @@ postgresBastard.prototype.findOne = function(tableName, id) {
   }.bind(this));
 }
 
-postgresBastard.prototype.find = function(tableName, filter, sort) {
-  var query = addSortByToQuery("select * from " + tableName + " where _data @> '" + JSON.stringify(filter) + "'", sort);
+postgresBastard.prototype.find = function(tableName, user, filter, sort) {
+  var query = "select * from " + tableName + " where _data @> '" + JSON.stringify(filter) + "'";
+
+  if(tableName !== 'app_users') {
+    query += " and _created_by_id='" + user._id + "'";
+  }
+
+  query = addSortByToQuery(query, sort);
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
@@ -62,26 +68,42 @@ postgresBastard.prototype.find = function(tableName, filter, sort) {
   }.bind(this));
 }
 
-postgresBastard.prototype.insertDocument = function(tableName, data) {
+postgresBastard.prototype.insertDocument = function(tableName, user, data) {
   return this.DB.createTable(tableName).then(function() {
-    var query = 'insert into ' + tableName + ' (_created_date, _last_updated_date, _data) values (' +
-      'now(), now(), \'' + JSON.stringify(data) + '\') returning id, _created_date, _last_updated_date, _data;';
+    var insertParams = {
+      _created_date: "now()",
+      _last_updated_date: "now()",
+      _data: "'" + JSON.stringify(data) + "'"
+    }
+
+    if(tableName !== 'app_users') {
+      insertParams._created_by_id = "'" + user._id + "'";
+    }
+
+    var columns = [], values = [];
+    for(column in insertParams) {
+      columns.push(column);
+      values.push(insertParams[column]);
+    }
+
+    var query = 'insert into ' + tableName + ' (' + columns.join(',') + ') values (' +
+      values.join(',') + ') returning id, ' + columns.join(',') + ';';
     return this.DB.run(query).then(function(result) {
       return _rowToObject(result.rows[0]);
     });
   }.bind(this));
 }
 
-postgresBastard.prototype.updateDocument = function(tableName, id, data) {
+postgresBastard.prototype.updateDocument = function(tableName, id, user, data) {
   var query = "update " + tableName + " set _last_updated_date=now(), _data='" +
-    JSON.stringify(data) + "' where id='" + id + "';";
+    JSON.stringify(data) + "' where id='" + id + "' AND _created_by_id='" + user._id + "';";
   return this.DB.run(query).then(function (result) {
     return result.rowCount;
   });
 }
 
-postgresBastard.prototype.removeDocument = function(tableName, id) {
-  var query = "delete from " + tableName + " where id='" + id + "';";
+postgresBastard.prototype.removeDocument = function(tableName, id, user) {
+  var query = "delete from " + tableName + " where id='" + id + "' and _created_by_id='" + user._id + "';";
   return this.DB.run(query).then(function(result) {
     if(result.rowCount === 1) {
       return {message: "Successfully removed row \"" + id + "\" from table " + tableName };
@@ -91,6 +113,16 @@ postgresBastard.prototype.removeDocument = function(tableName, id) {
   });
 }
 
+postgresBastard.prototype.addUserScope = function(tableName) {
+  return this.DB.addUserScopeToTable(tableName);
+}
+
+postgresBastard.prototype.getScope = function(tableName) {
+  return this.DB._getCurrentTableNames().then(function() {
+    return this.DB.scope;
+  }.bind(this));
+}
+
 function _rowToObject(row) {
   var keys = Object.keys(row._data);
   var returnObj = { 
@@ -98,6 +130,11 @@ function _rowToObject(row) {
     _created_date: row._created_date,
     _last_updated_date: row._last_updated_date
   };
+
+  if(row._created_by_id) {
+    returnObj._created_by_id = row._created_by_id
+  }
+
   keys.forEach(function(key) {
     returnObj[key] = row._data[key];
   });

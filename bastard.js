@@ -1,17 +1,13 @@
 var loginHandler = require('./app/login');
 var methods = require('./app/methods');
 
-function db(bastard) {
+function db(bastard, session) {
   return function(req, res, next) {
     methods.process(bastard, req, res, next, 20);
   }
 }
 
 function login(bastard) {
-  //app.get('/loginurl', login.url);
-  //app.get('/loginCallback', login.login);
-  //app.get('/environment', login.environment);
-
   return function(req, res, next) {
     if(req.path === '/loginurl') {
       loginHandler.url(req, res);

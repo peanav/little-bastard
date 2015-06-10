@@ -61,11 +61,12 @@ function _getUser(bastard, response, callback) {
     avatar: response.image.url
   };
 
-  return bastard.find(userTableName, {email: user.email}).then(function(results) {
+
+  return bastard.find(userTableName, user, {email: user.email}).then(function(results) {
     if(results.length) {
       return results[0];
     } else {
-      return bastard.insertDocument(userTableName, user).then(function(result) {
+      return bastard.insertDocument(userTableName, user, user).then(function(result) {
         return result;
       });
     }

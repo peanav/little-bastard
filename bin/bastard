@@ -3,7 +3,7 @@
 var program = require('commander');
 var inquirer = require('inquirer');
 var path = require('path');
-var pg = require('../app/pg');
+var config = require(process.cwd() + '/bastard.config.js');
 
 var cliVersion = require(path.resolve(__dirname + '/../package.json')).version;
 
@@ -48,15 +48,17 @@ program
   .command('user_scope [tableName]')
   .description('Add user scoping to the table')
   .action(function(tableName) {
-    pg._tableExists(tableName).then(function(exists) {
-      if(exists) {
-        pg.addUserScopeToTable(tableName, function() {
-          console.log('SUCCESS: Added user scope to "' + tableName + '"');
-        });
-      } else {
-        console.log('ERROR: Table "' + tableName + '" does not exist');
-      }
+    config.getDatabase().addUserScope(tableName).then(function() {
+      console.log('SUCCESS: Added user scope to "' + tableName + '"');
     });
   });
+
+program
+  .command('list [tableName]')
+  .description('list tables and current scopeing')
+  .action(function() {
+    config.getDatabase().getScope().then(console.log);
+  });
+
 
 program.parse(process.argv);
