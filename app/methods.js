@@ -21,7 +21,11 @@ function getPathParts(req) {
 }
 
 function get(database, req, res) {
-  var method, sort, parts = getPathParts(req);
+  var method
+    , sort
+    , parts = getPathParts(req)
+    , options = {}
+  ;
 
   if(parts.length === 1) {
     method = findAll;
@@ -32,17 +36,20 @@ function get(database, req, res) {
   }
 
   if(req.query._sort) {
-    sort =  {
+    options.sort =  {
       key: req.query._sort,
-      order: req.query._order || 'asc'
+      order: req.query._order || 'ASC'
     }
   }
 
-  method(database, req, res, parts, sort);
+  options._limit = req.query._limit || 20;
+  options._offset = req.query._offset || 0;
+
+  method(database, req, res, parts, options);
 }
 
-function findAll(database, req, res, parts, sort) {
-  database.findAll(parts[0], req.session.user,  sort).then(function(items) {
+function findAll(database, req, res, parts, order) {
+  database.findAll(parts[0], req.session.user,  order).then(function(items) {
     res.json(items);
   }, function(err) {
     return res.status(500).send(err.message || err);
@@ -64,7 +71,7 @@ function findOne(database, req, res, parts) {
   });
 }
 
-function find(database, req, res, parts, sort) {
+function find(database, req, res, parts, order) {
   var filter = parts.reduce(function(memo, part, index) {
     if(index && index%2) {
       var argument = decodeURI(parts[index+1]);
@@ -73,7 +80,7 @@ function find(database, req, res, parts, sort) {
     return memo;
   }, {});
 
-  return database.find(parts[0], req.session.user, filter, sort).then(function(items) {
+  return database.find(parts[0], req.session.user, filter, order).then(function(items) {
     res.json(items);
   }, function(err) {
     return res.status(500).send(err.message || err);

@@ -1,4 +1,5 @@
 var pg = require("pg");
+var _ = require('lodash');
 var Promise = require("bluebird");
 Promise.promisifyAll(pg);
 
@@ -23,7 +24,7 @@ DB.prototype.run = function(query) {
     return new Promise(function(resolve, reject) {
       console.log(query);
       client.query(query, function(err, result) {
-        if(err) { reject('error running query', err); }
+        if(err) { console.log(err); reject('error running query', err); }
         resolve(result);
       });
     });
@@ -31,6 +32,83 @@ DB.prototype.run = function(query) {
     return result;
   });
 }
+
+
+DB.prototype.select = function(user, tableName, options) {
+  var query = ["SELECT * FROM", tableName];
+
+  options = _.defaults(options || {}, { where: {} });
+
+  if(tableName !== 'app_users') {
+    options.where._created_by_id = user._id;
+  }
+
+  addWhereClause(query, options.where);
+  addSortByToQuery(query, options.sort);
+  addLimitOffsetToQuery(query, options);
+
+  return this.run(query.join(' ') + ";");
+}
+
+DB.prototype.insert = function(user, tableName, data) {
+  var insertParams = {
+    _created_date: "now()",
+    _last_updated_date: "now()",
+    _data: JSON.stringify(data)
+  }
+
+  if(tableName !== 'app_users') {
+    insertParams._created_by_id = user._id;
+  }
+
+  var columns = _.map(insertParams, function(value, key) {
+  });
+
+  var columns = [], values = [];
+  for(column in insertParams) {
+    columns.push(column);
+    var value = insertParams[column];
+    if(_.isNaN(+value) && value !== "now()") {
+      value = "'" + value + "'";
+    }
+    values.push(value);
+  }
+
+  var query = 'insert into ' + tableName + ' (' + columns.join(',') + ') values (' +
+    values.join(',') + ') returning id, ' + columns.join(',') + ';';
+
+  return this.run(query);
+}
+
+function addWhereClause(query, whereClause) {
+  var where = _.map(whereClause, _objectToString);
+  if(where.length) {
+    query.push(' WHERE ', where.join(' AND '));
+  }
+  return query;
+
+  function _objectToString(value, key) {
+    var operator = (key === '_data' ? '@>' : '=');
+    if(_.isNaN(+value) && value !== "now()") { return key + operator + "'" + value + "'"; }
+    return key + operator + value;
+  }
+}
+
+function addSortByToQuery(query, sort) {
+  if(!sort) { return query; }
+  if(sort) {
+    query.push(" ORDER BY _data->'" + sort.key + "' " + sort.order.toUpperCase());
+  }
+  return query;
+}
+
+function addLimitOffsetToQuery(query, options) {
+  console.log(options);
+  query.push('LIMIT ' + options._limit);
+  query.push('OFFSET ' + options._offset);
+  return query;
+}
+
 
 DB.prototype.tableExists = function(tableName) {
   return this._getCurrentTableNames().then(function(names) {
@@ -81,11 +159,12 @@ DB.prototype.addUserScopeToTable = function(tableName) {
 }
 
 DB.prototype._isUserScoped = function(tableName) {
-  return this._getTableSchema(tableName).then(function(schema) {
-    return schema.filter(function(columnName) {
-      return columnName === '_user_id';
-    }).length > 0;
-  });
+  return tableName !== 'app_users';
+  //return this._getTableSchema(tableName).then(function(schema) {
+    //return schema.filter(function(columnName) {
+      //return columnName === '_user_id';
+    //}).length > 0;
+  //});
 }
 
 DB.prototype._getTableSchema = function(tableName) {

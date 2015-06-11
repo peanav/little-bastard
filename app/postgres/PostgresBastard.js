@@ -29,12 +29,10 @@ function addWhereClause(query, whereClause) {
   }
 }
 
-postgresBastard.prototype.findAll = function(tableName, user, sort) {
-  var query = addSortByToQuery('SELECT * FROM ' + tableName + ' WHERE _created_by_id=\'' + user._id + '\'', sort);
-
+postgresBastard.prototype.findAll = function(tableName, user, options) {
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
-      return this.DB.run(query).then(function(result) {
+      return this.DB.select(user, tableName, options).then(function(result) {
         return result.rows.map(_rowToObject);
       });
     } else {
@@ -44,11 +42,11 @@ postgresBastard.prototype.findAll = function(tableName, user, sort) {
 }
 
 postgresBastard.prototype.findOne = function(tableName, id, user) {
-  var query = "select * from " + tableName + " where id='" + id + "' AND _created_by_id='" + user._id + "';";
+  var whereClause = { id: id, };
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
-      return this.DB.run(query).then(function(result) {
+      return this.DB.select(user, tableName, { where: whereClause }).then(function(result) {
         if(!result || !result.rows || !result.rows.length) { 
           return Promise.reject(new Error('Row with id: ' + id + ' not found in table "' + tableName + '"'));
         }
@@ -61,20 +59,11 @@ postgresBastard.prototype.findOne = function(tableName, id, user) {
 }
 
 postgresBastard.prototype.find = function(tableName, user, filter, sort) {
-  var whereClause = {
-    _data: JSON.stringify(filter),
-    _created_by_id: user._id
-  };
-
-  if(tableName === 'app_users') {
-    delete whereClause._created_by_id;
-  }
-
-  var query = addSortByToQuery(addWhereClause("select * from " + tableName, whereClause), sort);
+  var whereClause = { _data: JSON.stringify(filter) };
 
   return this.DB.tableExists(tableName).then(function(exists) {
     if(exists) {
-      return this.DB.run(query).then(function(result) {
+      return this.DB.select(user, tableName, {where: whereClause}).then(function(result) {
         return result.rows.map(_rowToObject);
       });
     } else {
@@ -86,47 +75,20 @@ postgresBastard.prototype.find = function(tableName, user, filter, sort) {
 
 postgresBastard.prototype.insertDocument = function(tableName, user, data) {
   return this.DB.createTable(tableName).then(function() {
-    var insertParams = {
-      _created_date: "now()",
-      _last_updated_date: "now()",
-      _data: "'" + JSON.stringify(data) + "'"
-    }
-
-    if(tableName !== 'app_users') {
-      insertParams._created_by_id = "'" + user._id + "'";
-    }
-
-    var columns = [], values = [];
-    for(column in insertParams) {
-      columns.push(column);
-      values.push(insertParams[column]);
-    }
-
-    var query = 'insert into ' + tableName + ' (' + columns.join(',') + ') values (' +
-      values.join(',') + ') returning id, ' + columns.join(',') + ';';
-    return this.DB.run(query).then(function(result) {
+    return this.DB.insert(user, tableName, data).then(function(result) {
       return _rowToObject(result.rows[0]);
     });
   }.bind(this));
 }
 
 postgresBastard.prototype.updateDocument = function(tableName, id, user, data) {
-  var updateParams = {
-    _last_updated_date: "now()",
-    _data: JSON.stringify(data)
-  }
-
-  var whereClause = {
-    id: id,
-    _created_by_id: user._id
-  };
-
+  var updateParams = { _last_updated_date: "now()", _data: JSON.stringify(data) }
+  var whereClause = { id: id, _created_by_id: user._id };
   if(tableName === 'app_users') { delete whereClause._created_by_id; }
 
   var values = _.map(updateParams, _objectToString).join(',');
-  var where = _.map(whereClause, _objectToString).join(' and ');
 
-  var query = "update " + tableName + " set " + values + " where " + where;
+  var query = addWhereClause("update " + tableName + " set " + values);
   return this.DB.run(query).then(function (result) {
     return result.rowCount;
   });
@@ -138,7 +100,10 @@ postgresBastard.prototype.updateDocument = function(tableName, id, user, data) {
 }
 
 postgresBastard.prototype.removeDocument = function(tableName, id, user) {
-  var query = "delete from " + tableName + " where id='" + id + "' and _created_by_id='" + user._id + "';";
+  var whereClause = { id: id, _created_by_id: user._id };
+  if(tableName === 'app_users') { delete whereClause._created_by_id; }
+
+  var query = addWhereClause("DELETE FROM " + tableName, whereClause);
   return this.DB.run(query).then(function(result) {
     if(result.rowCount === 1) {
       return {message: "Successfully removed row \"" + id + "\" from table " + tableName };
